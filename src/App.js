@@ -32,7 +32,13 @@ const App = (props) => {
           <Route
             path="/profile"
             render={() => {
-              return <Profile data={props.state.profilePage} addPost={props.addPost} />;
+              return (
+                <Profile
+                  data={props.state.profilePage}
+                  addPost={props.addPost}
+                  updateNewPostText={props.updateNewPostText}
+                />
+              );
             }}
           />
           <Route
