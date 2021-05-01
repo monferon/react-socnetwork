@@ -1,24 +1,49 @@
 var path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
+  mode: "development",
   entry: "./src/index.js",
+  output: {
+    path: path.join(__dirname, "dist"),
+    filename: "[name].[contenthash].js",
+  },
+  devServer: {
+    contentBase: path.join(__dirname, "dist"),
+    compress: true,
+    port: 9000,
+    watchContentBase: true,
+    progress: true,
+  },
   module: {
     rules: [
-      { test: /\.css$/, use: ["style-loader", "css-loader"] },
-      { test: /\.(js)$/, use: "babel-loader" },
+      {
+        test: /\.js$/,
+        loader: "babel-loader", // определяем загрузчик
+        options: {
+          presets: ["@babel/preset-env", "@babel/preset-react"], // используемые плагины
+        },
+      },
+      {
+        test: /.(s*)css$/,
+        use: ["style-loader", "css-loader", "sass-loader"],
+      },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: ["file-loader"],
+      },
+      {
+        test: /\.(jpe?g|png|gif|svg|woff|woff2|eot|ttf)$/i, // a regular expression that catches .js files
+        loader: "url-loader",
+      },
     ],
   },
-  output: {
-    filename: "index_bundle.js",
-    path: path.resolve(__dirname, "dist"),
-  },
-
   plugins: [
-    new HtmlWebpackPlugin(),
-    new webpack.EnvironmentPlugin({
-      NODE_ENV: "production",
+    new HtmlWebpackPlugin({
+      template: "./src/index.html",
     }),
+    new CleanWebpackPlugin(),
   ],
 };
